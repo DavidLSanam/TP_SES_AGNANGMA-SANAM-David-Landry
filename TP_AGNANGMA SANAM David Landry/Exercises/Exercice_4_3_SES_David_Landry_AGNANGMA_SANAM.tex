@@ -1,0 +1,207 @@
+\documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{titlesec}
+\usepackage{hyperref}
+
+% Auteur
+\author{AGNANGMA SANAM David Landry}
+
+% --- Configuration géométrique ---
+\geometry{
+  a4paper,
+  left=2.5cm,
+  right=2.5cm,
+  top=2.5cm,
+  bottom=2.5cm,
+  heightrounded
+}
+
+% --- Mise en forme des titres ---
+\titleformat{\section}
+  {\normalfont\Large\bfseries\centering}
+  {\thesection.}
+  {0.5em}
+  {}
+  
+\titleformat{\subsection}
+  {\normalfont\large\bfseries}
+  {\thesubsection.}
+  {0.5em}
+  {}
+
+% --- Environnements personnalisés ---
+\theoremstyle{definition}
+\newtheorem{definition}{Définition}
+\newtheorem{remarque}{Remarque}
+\newtheorem*{preuve}{Preuve}
+
+\newenvironment{theorembox}
+  {\begin{framed}\begin{definition}}
+  {\end{definition}\end{framed}}
+
+% --- Configuration des listes ---
+\setlist[enumerate]{
+  label=\arabic*.,
+  leftmargin=*,
+  itemsep=0.5em,
+  parsep=0.3em
+}
+
+\setlist[itemize]{
+  leftmargin=*,
+  itemsep=0.3em,
+  parsep=0.2em
+}
+
+% --- Configuration générale ---
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.8em}
+\linespread{1.1}
+
+% --- Commandes personnalisées ---
+\newcommand{\vect}[1]{\mathbf{#1}}
+\newcommand{\matrice}[1]{\mathbf{#1}}
+\newcommand{\E}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\Var}[1]{\operatorname{Var}\left(#1\right)}
+\newcommand{\Cov}[2]{\operatorname{Cov}\left(#1, #2\right)}
+
+\begin{document}
+
+% --- En-tête ---
+\begin{center}
+  \textbf{\large Exercice 4.3 -- Sur l'indice de Moran} \\[0.5em]
+  \textit{Géographie quantitative -- Autocorrélation spatiale} \\[1cm]
+  {\large \textbf{AGNANGMA SANAM David Landry}} \\[1cm]
+  {\large \textbf{ISE1 CYCLE LONG}} \\[1cm]
+\end{center}
+
+\vspace{1em}
+
+% --- Énoncé mis en valeur ---
+\begin{framed}
+\noindent\textbf{Énoncé :} 
+Montrer que si la matrice $\matrice{W}$ est normalisée en ligne et si le vecteur $\vect{X}$ est centré, le vecteur spatialement décalé $\matrice{W}\vect{X}$ est également centré. En déduire que la pente de la droite de régression simple de $\matrice{W}\vect{X}$ sur $\vect{X}$ est égale à l'indice de Moran si la matrice $\matrice{W}$ est normalisée en ligne.
+\end{framed}
+
+\section*{Partie 1 : Centrage du vecteur spatialement décalé}
+
+\begin{definition}[Matrice normalisée en ligne]
+Une matrice $\matrice{W} = (w_{ij})$ de taille $n \times n$ est dite \textbf{normalisée en ligne} si pour tout $i = 1, \ldots, n$ :
+\[
+\sum_{j=1}^{n} w_{ij} = 1
+\]
+\end{definition}
+
+\begin{definition}[Vecteur centré]
+Un vecteur $\vect{X} = (X_1, X_2, \ldots, X_n)^T$ est dit \textbf{centré} si :
+\[
+\sum_{i=1}^{n} X_i = 0
+\]
+\end{definition}
+
+\begin{preuve}[Que $\matrice{W}\vect{X}$ est centré]
+Soit $\vect{X}$ un vecteur centré et $\matrice{W}$ une matrice normalisée en ligne.
+
+La $i$-ème composante du vecteur spatialement décalé est :
+\[
+(\matrice{W}\vect{X})_i = \sum_{j=1}^{n} w_{ij} X_j
+\]
+
+Calculons la somme des composantes de $\matrice{W}\vect{X}$ :
+\begin{align*}
+\sum_{i=1}^{n} (\matrice{W}\vect{X})_i 
+&= \sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij} X_j \\
+&= \sum_{j=1}^{n} X_j \left( \sum_{i=1}^{n} w_{ij} \right) \\
+&= \sum_{j=1}^{n} X_j \cdot S_j
+\end{align*}
+où $S_j = \sum_{i=1}^{n} w_{ij}$ est la somme de la colonne $j$ de $\matrice{W}$.
+
+Si $\matrice{W}$ est \textbf{symétrique} (cas fréquent en analyse spatiale), alors $S_j = 1$ pour tout $j$ (car chaque colonne est aussi normalisée), d'où :
+\[
+\sum_{i=1}^{n} (\matrice{W}\vect{X})_i = \sum_{j=1}^{n} X_j = 0
+\]
+Ce qui prouve que $\matrice{W}\vect{X}$ est centré.
+\end{preuve}
+
+\begin{remarque}
+Dans le cas général d'une matrice non symétrique normalisée en ligne, la somme $\sum_{i=1}^{n} (\matrice{W}\vect{X})_i$ n'est pas nécessairement nulle. Cependant, pour la plupart des matrices de contiguïté utilisées en pratique, cette propriété reste vérifiée.
+\end{remarque}
+
+\section*{Partie 2 : Lien avec l'indice de Moran}
+
+\subsection*{Rappel : Pente de la régression linéaire simple}
+
+Pour deux vecteurs centrés $\vect{Y}$ et $\vect{X}$, la pente de la régression de $\vect{Y}$ sur $\vect{X}$ est :
+\[
+\hat{\beta} = \frac{\Cov{\vect{X}}{\vect{Y}}}{\Var{\vect{X}}}
+= \frac{\displaystyle\frac{1}{n} \sum_{i=1}^{n} X_i Y_i}{\displaystyle\frac{1}{n} \sum_{i=1}^{n} X_i^2}
+= \frac{\displaystyle\sum_{i=1}^{n} X_i Y_i}{\displaystyle\sum_{i=1}^{n} X_i^2}
+\]
+
+\subsection*{Application à notre cas}
+
+Posons $\vect{Y} = \matrice{W}\vect{X}$. D'après la Partie 1, $\vect{Y}$ est centré lorsque $\matrice{W}$ est symétrique et normalisée en ligne. Alors :
+\begin{align*}
+\hat{\beta} &= \frac{\displaystyle\sum_{i=1}^{n} X_i (\matrice{W}\vect{X})_i}
+                   {\displaystyle\sum_{i=1}^{n} X_i^2} \\
+           &= \frac{\displaystyle\sum_{i=1}^{n} X_i \left( \sum_{j=1}^{n} w_{ij} X_j \right)}
+                   {\displaystyle\sum_{i=1}^{n} X_i^2} \\
+           &= \frac{\displaystyle\sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij} X_i X_j}
+                   {\displaystyle\sum_{i=1}^{n} X_i^2}
+\end{align*}
+
+\subsection*{Indice de Moran}
+
+\begin{definition}[Indice de Moran]
+Pour un vecteur $\vect{X}$ et une matrice de poids $\matrice{W}$, l'indice de Moran est défini par :
+\[
+I = \frac{n}{\displaystyle\sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij}} 
+    \cdot \frac{\displaystyle\sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij} (X_i - \bar{X})(X_j - \bar{X})}
+               {\displaystyle\sum_{i=1}^{n} (X_i - \bar{X})^2}
+\]
+où $\bar{X} = \frac{1}{n} \sum_{i=1}^{n} X_i$ est la moyenne de $\vect{X}$.
+\end{definition}
+
+\subsection*{Égalité des deux expressions}
+
+Si $\vect{X}$ est centré ($\bar{X} = 0$) et si $\matrice{W}$ est normalisée en ligne :
+\begin{align*}
+I &= \frac{n}{\displaystyle\sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij}} 
+    \cdot \frac{\displaystyle\sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij} X_i X_j}
+               {\displaystyle\sum_{i=1}^{n} X_i^2} \\[1em]
+  &= \frac{n}{n} \cdot \frac{\displaystyle\sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij} X_i X_j}
+                           {\displaystyle\sum_{i=1}^{n} X_i^2} \quad 
+     \text{(car } \sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij} = \sum_{i=1}^{n} 1 = n \text{)} \\[1em]
+  &= \frac{\displaystyle\sum_{i=1}^{n} \sum_{j=1}^{n} w_{ij} X_i X_j}
+         {\displaystyle\sum_{i=1}^{n} X_i^2} \\
+  &= \hat{\beta}
+\end{align*}
+
+\section*{Conclusion}
+
+\begin{framed}
+\centering
+\begin{minipage}{0.9\textwidth}
+\noindent\textbf{Résultat principal :} \\
+Si la matrice de voisinage $\matrice{W}$ est normalisée en ligne et symétrique, et si le vecteur $\vect{X}$ est centré, alors :
+\begin{enumerate}
+    \item Le vecteur spatialement décalé $\matrice{W}\vect{X}$ est également centré
+    \item La pente $\hat{\beta}$ de la droite de régression simple de $\matrice{W}\vect{X}$ sur $\vect{X}$ 
+          est égale à l'indice de Moran $I$
+\end{enumerate}
+\end{minipage}
+\end{framed}
+
+\begin{remarque}[Interprétation géographique]
+Ce résultat montre que l'indice de Moran peut être interprété comme le coefficient de régression du retard spatial sur la variable elle-même. Une valeur positive de $I$ indique une autocorrélation spatiale positive (similarité entre voisins), tandis qu'une valeur négative indique une dissimilarité.
+\end{remarque}
+
+\end{document}
